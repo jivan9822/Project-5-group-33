@@ -19,6 +19,10 @@ exports.globalErrorHand = (err, req, res, next) => {
   if (err.kind === 'ObjectId') {
     err = mongooseObjErr(err);
   }
+  if (err.name == 'CastError') {
+    err = CastErrorHandler(err);
+  }
+
   res.status(err.statusCode || 500).json({
     status: false,
     msg: err.message,
@@ -51,3 +55,6 @@ const syntaxErrHandler = (error) =>
 
 const mongooseObjErr = (error) =>
   new AppError(`Invalid ObjectId: ${error.value}`, 400);
+
+const CastErrorHandler = (err) =>
+  new AppError(`Incorrect id ${err.value}`, 400);
